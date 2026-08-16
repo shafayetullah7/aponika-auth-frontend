@@ -1,5 +1,5 @@
 import { useAction, useSearchParams, useSubmission } from "@solidjs/router";
-import { createEffect, createResource, createSignal, For, Show } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import type { Component } from "solid-js";
 import {
   EnvelopeIcon,
@@ -48,13 +48,36 @@ export default function ConsentPage() {
     extractInteractionUidFromReturnTo(returnTo()) ?? "";
   const [remember, setRemember] = createSignal(true);
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null);
+  const [details, setDetails] = createSignal<
+    Awaited<ReturnType<typeof oauthConsentApi.getInteraction>> | undefined
+  >();
+  const [loadingDetails, setLoadingDetails] = createSignal(true);
+  const [loadError, setLoadError] = createSignal<Error | undefined>();
 
-  const [details] = createResource(interactionUid, async (uid) => {
+  // OIDC interaction cookies are set on the issuer host (:3010). SSR on :3011
+  // cannot forward them, so load consent details in the browser only.
+  onMount(() => {
+    const uid = interactionUid();
     if (!uid) {
-      throw new Error("Missing interaction id");
+      setLoadError(new Error("Missing interaction id"));
+      setLoadingDetails(false);
+      return;
     }
 
-    return oauthConsentApi.getInteraction(uid);
+    void oauthConsentApi
+      .getInteraction(uid)
+      .then((prompt) => {
+        setDetails(prompt);
+        setLoadError(undefined);
+      })
+      .catch((error: unknown) => {
+        setLoadError(
+          error instanceof Error ? error : new Error("Failed to load consent"),
+        );
+      })
+      .finally(() => {
+        setLoadingDetails(false);
+      });
   });
 
   const allowConsent = useAction(allowConsentAction);
@@ -102,7 +125,7 @@ export default function ConsentPage() {
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
       <Card class="w-full max-w-md">
         <Show
-          when={!details.loading && details.error}
+          when={!loadingDetails() && loadError()}
           fallback={
             <Show
               when={details()}
@@ -201,7 +224,7 @@ export default function ConsentPage() {
           }
         >
           <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            {t("consent.loadFailed")}
+            {loadError()?.message || t("consent.loadFailed")}
           </div>
         </Show>
       </Card>
