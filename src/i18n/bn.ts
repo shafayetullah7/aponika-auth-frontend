@@ -3,6 +3,12 @@ export const dict = {
     loading: "লোড হচ্ছে...",
     optional: "ঐচ্ছিক",
     requiredForReview: "পর্যালোচনার জন্য প্রয়োজন",
+    apiReachable: "অথ API পৌঁছানো যাচ্ছে",
+    apiUnreachable: "অথ API পৌঁছানো যাচ্ছে না",
+    apiStatus: "স্ট্যাটাস",
+    apiDb: "ডাটাবেস",
+    apiDbOk: "ঠিক আছে",
+    apiDbDown: "বন্ধ",
   },
   auth: {
     signIn: "সাইন ইন",

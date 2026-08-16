@@ -1,4 +1,5 @@
 import { A } from "@solidjs/router";
+import { ApiHealthStatus } from "~/components/ApiHealthStatus";
 import { Button, Card, FieldGroup, Input } from "~/components/ui";
 import { useI18n } from "~/i18n";
 
@@ -44,6 +45,10 @@ export default function LoginPage() {
         <p class="mt-6 rounded-xl bg-forest-50 px-4 py-3 text-center text-sm text-forest-700">
           {t("auth.placeholder")}
         </p>
+
+        <div class="mt-4">
+          <ApiHealthStatus />
+        </div>
 
         <p class="mt-6 text-center text-sm text-forest-600">
           {t("auth.signUp")}?{" "}

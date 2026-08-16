@@ -20,6 +20,20 @@ pnpm build
 pnpm typecheck
 ```
 
+## Environment
+
+Copy `.env.example` to `.env.development`:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `VITE_API_ORIGIN` | `http://localhost:3010` | Auth API origin (no path) |
+| `VITE_API_BASE_URL` | `http://localhost:3010/api/v1` | Versioned API base for `fetcher()` |
+| `VITE_HEALTH_URL` | `http://localhost:3010/health` | Public health smoke test |
+| `VITE_CLIENT_TIMEOUT` | `30000` | Browser fetch timeout (ms) |
+| `VITE_SERVER_TIMEOUT` | `30000` | SSR fetch timeout (ms) |
+
+In dev, the login page shows API health when the backend is running (`pnpm dev` on port 3011 requires backend CORS for this origin).
+
 ## Documentation
 
 | Doc | Purpose |

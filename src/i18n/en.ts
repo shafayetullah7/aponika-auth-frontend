@@ -3,6 +3,12 @@ export const dict = {
     loading: "Loading...",
     optional: "Optional",
     requiredForReview: "Required for review",
+    apiReachable: "Auth API reachable",
+    apiUnreachable: "Cannot reach auth API",
+    apiStatus: "Status",
+    apiDb: "Database",
+    apiDbOk: "OK",
+    apiDbDown: "Down",
   },
   auth: {
     signIn: "Sign in",
