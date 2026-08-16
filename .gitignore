@@ -8,6 +8,8 @@ app.config.timestamp_*.js
 
 # Environment
 .env
+.env.*
+!.env.example
 .env*.local
 
 # dependencies
@@ -19,9 +21,6 @@ app.config.timestamp_*.js
 .classpath
 *.launch
 .settings/
-
-# Temp
-gitignore
 
 # System Files
 .DS_Store

@@ -1,0 +1,19 @@
+export const dict = {
+  common: {
+    loading: "Loading...",
+    optional: "Optional",
+    requiredForReview: "Required for review",
+  },
+  auth: {
+    signIn: "Sign in",
+    signUp: "Create account",
+    email: "Email",
+    password: "Password",
+    loginTitle: "Welcome back",
+    loginSubtitle: "Sign in to your Aponika account",
+    registerTitle: "Create your account",
+    registerSubtitle: "Join Aponika — identity flows coming soon",
+    placeholder: "Login and registration flows will be implemented in a later phase.",
+    emailHint: "The email address for your account",
+  },
+} as const;

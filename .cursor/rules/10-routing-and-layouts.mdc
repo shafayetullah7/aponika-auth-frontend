@@ -1,0 +1,13 @@
+---
+description: Routing and layout conventions
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# Routing and Layout Rules
+
+- Follow route-group conventions in `src/routes`.
+- `(auth)` group uses centered card layout for login/register.
+- Use route-level orchestration; avoid deeply embedding route concerns into generic components.
+- Use `A` links for navigation unless non-router behavior is needed.
+- `returnTo` query param allowed only for post-login redirect.

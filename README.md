@@ -1,33 +1,29 @@
-# SolidStart
+# @aponika/auth-frontend
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+SolidStart app for end-user identity flows: login, register, password reset, account settings, MFA.
 
-## Creating a project
+**Local port:** `3011`  
+**Setup status:** SolidStart 1.1 + Tailwind 4 — see [platform setup plan](../docs/PLATFORM_SETUP_PLAN.md).
 
-```bash
-# create a new project in the current directory
-npm init solid@latest
+## Prerequisites
 
-# create a new project in my-app
-npm init solid@latest my-app
-```
+- Node.js 22 (`nvm use` reads `.nvmrc`)
+- pnpm 10
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Commands
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
+cp .env.example .env.development   # first time
+pnpm dev                           # http://localhost:3011
+pnpm build
+pnpm typecheck
 ```
 
-## Building
+## Documentation
 
-Solid apps are built with Nitro _presets_, which optimise your project for deployment to different environments.
-
-By default, `npm run build` will generate a Node app under `.output` that you can run with `npm start`. To use a different preset, set it on the `nitro()` plugin in your `vite.config.ts`.
-
-## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)
-# aponika-auth-frontend
+| Doc | Purpose |
+|-----|---------|
+| [../docs/PLATFORM_SETUP_PLAN.md](../docs/PLATFORM_SETUP_PLAN.md) | Phased bootstrap (start here) |
+| [../docs/STACK.md](../docs/STACK.md) | Locked dependency versions |
+| [../docs/INTEGRATION.md](../docs/INTEGRATION.md) | OIDC contract for consumer apps |
