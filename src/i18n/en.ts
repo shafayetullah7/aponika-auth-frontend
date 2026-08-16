@@ -59,4 +59,17 @@ export const dict = {
     name: "Name",
     signOut: "Sign out",
   },
+  consent: {
+    title: "Authorize application",
+    subtitle: "{0} wants to access your Aponika account",
+    requestedAccess: "This application is requesting:",
+    scopeOpenId: "Sign you in with OpenID Connect",
+    scopeProfile: "View your basic profile",
+    scopeEmail: "View your email address",
+    remember: "Remember this choice and skip consent next time",
+    allow: "Allow",
+    deny: "Deny",
+    missingInteraction: "This consent request is invalid or expired.",
+    loadFailed: "We could not load this consent request. Start sign-in again from the application.",
+  },
 } as const;

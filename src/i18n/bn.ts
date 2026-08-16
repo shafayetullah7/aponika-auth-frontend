@@ -59,4 +59,17 @@ export const dict = {
     name: "নাম",
     signOut: "সাইন আউট",
   },
+  consent: {
+    title: "অ্যাপ্লিকেশন অনুমোদন",
+    subtitle: "{0} আপনার Aponika অ্যাকাউন্টে প্রবেশ চাইছে",
+    requestedAccess: "এই অ্যাপ্লিকেশন যা চাইছে:",
+    scopeOpenId: "OpenID Connect দিয়ে সাইন ইন",
+    scopeProfile: "আপনার মৌলিক প্রোফাইল দেখা",
+    scopeEmail: "আপনার ইমেইল ঠিকানা দেখা",
+    remember: "এই সিদ্ধান্ত মনে রাখুন এবং পরের বার অনুমতি চেয়ো না",
+    allow: "অনুমতি দিন",
+    deny: "প্রত্যাখ্যান",
+    missingInteraction: "এই অনুমতি অনুরোধটি অবৈধ বা মেয়াদোত্তীর্ণ।",
+    loadFailed: "অনুমতি অনুরোধ লোড করা যায়নি। অ্যাপ থেকে আবার সাইন ইন শুরু করুন।",
+  },
 } as const;

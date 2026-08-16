@@ -3,7 +3,7 @@ import { config } from "../config";
 const DEFAULT_RETURN_TO = "/account";
 
 /** Internal paths users may be sent to after login. */
-const ALLOWED_RETURN_TO_PREFIXES = ["/account"] as const;
+const ALLOWED_RETURN_TO_PREFIXES = ["/account", "/consent"] as const;
 
 const BLOCKED_PREFIXES = [
   "/login",
@@ -65,4 +65,14 @@ export function safeReturnTo(
   }
 
   return raw;
+}
+
+export function extractInteractionUidFromReturnTo(returnTo: string): string | null {
+  try {
+    const url = new URL(returnTo);
+    const match = url.pathname.match(/^\/interaction\/([^/]+)$/);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
 }
