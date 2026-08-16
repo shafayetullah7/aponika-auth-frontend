@@ -72,4 +72,17 @@ export const dict = {
     missingInteraction: "This consent request is invalid or expired.",
     loadFailed: "We could not load this consent request. Start sign-in again from the application.",
   },
+  oauthError: {
+    title: "Sign-in could not continue",
+    generic: "Something went wrong during sign-in. Please try again from the application.",
+    accessDenied: "You declined access or the application was not allowed to continue.",
+    invalidClient: "The application is not registered or is not allowed to sign in.",
+    invalidRequest: "The sign-in request was invalid. The application may need to fix its configuration.",
+    unauthorizedClient: "This application is not authorized for the requested sign-in method.",
+    serverError: "The sign-in service encountered an error. Please try again later.",
+    codeLabel: "Error code:",
+    stateLabel: "State:",
+    hint: "Close this tab and start again from the application you were using.",
+    backToSignIn: "Back to sign in",
+  },
 } as const;

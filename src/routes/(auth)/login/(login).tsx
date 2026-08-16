@@ -4,7 +4,7 @@ import { createForm } from "@modular-forms/solid";
 import { ApiHealthStatus } from "~/components/ApiHealthStatus";
 import { Button, Card, FieldGroup, Input } from "~/components/ui";
 import { getLoginErrorState } from "~/lib/auth/login-errors";
-import { safeReturnTo } from "~/lib/auth/return-to";
+import { safeReturnTo, buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
 import { useI18n } from "~/i18n";
 import { loginSchema, type LoginFormData } from "~/schemas/login.schema";
 import { loginAction } from "./login.actions";
@@ -72,6 +72,9 @@ export default function LoginPage() {
 
     return t("auth.loginFailed");
   };
+
+  const registerHref = () =>
+    buildAuthPathWithReturnTo("/register", searchParams.returnTo);
 
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
@@ -159,7 +162,7 @@ export default function LoginPage() {
 
         <p class="mt-6 text-center text-sm text-forest-600">
           {t("auth.needAccount")}{" "}
-          <A href="/register" class="font-semibold text-forest-700 hover:text-forest-800">
+          <A href={registerHref()} class="font-semibold text-forest-700 hover:text-forest-800">
             {t("auth.signUp")}
           </A>
         </p>

@@ -67,6 +67,20 @@ export function safeReturnTo(
   return raw;
 }
 
+export function buildAuthPathWithReturnTo(
+  path: string,
+  returnTo: string | string[] | undefined,
+): string {
+  const raw = Array.isArray(returnTo) ? returnTo[0] : returnTo;
+  if (!raw || !isAllowedReturnTo(raw)) {
+    return path;
+  }
+
+  const params = new URLSearchParams();
+  params.set("returnTo", raw);
+  return `${path}?${params.toString()}`;
+}
+
 export function extractInteractionUidFromReturnTo(returnTo: string): string | null {
   try {
     const url = new URL(returnTo);
