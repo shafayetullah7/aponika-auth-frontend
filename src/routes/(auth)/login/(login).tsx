@@ -2,7 +2,7 @@ import { A, useAction, useSearchParams, useSubmission } from "@solidjs/router";
 import { createEffect, createSignal, Show } from "solid-js";
 import { createForm } from "@modular-forms/solid";
 import { ApiHealthStatus } from "~/components/ApiHealthStatus";
-import { Button, Card, FieldGroup, Input } from "~/components/ui";
+import { Button, Card, FieldGroup, Input, PasswordInput } from "~/components/ui";
 import { getLoginErrorState } from "~/lib/auth/login-errors";
 import { safeReturnTo, buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
 import { useI18n } from "~/i18n";
@@ -125,12 +125,12 @@ export default function LoginPage() {
                 requirement="required"
                 error={field.error}
               >
-                <Input
+                <PasswordInput
                   {...props}
-                  type="password"
                   autocomplete="current-password"
                   placeholder="••••••••"
                   value={field.value}
+                  error={field.error}
                   disabled={submission.pending}
                 />
               </FieldGroup>

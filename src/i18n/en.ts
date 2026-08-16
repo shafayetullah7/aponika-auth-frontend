@@ -24,6 +24,8 @@ export const dict = {
     registerSubtitle: "Sign up with your email — we'll send a verification link",
     emailHint: "The email address for your account",
     passwordHint: "At least 8 characters with upper, lower, number, and special character",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
     loginFailed: "Sign in failed. Please try again.",
     loginInvalidCredentials: "Invalid email or password.",
     loginRateLimited: "Too many sign-in attempts. Please wait and try again.",

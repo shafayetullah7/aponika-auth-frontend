@@ -1,7 +1,7 @@
 import { A, useAction, useSubmission } from "@solidjs/router";
 import { createEffect, createSignal, Show } from "solid-js";
 import { createForm } from "@modular-forms/solid";
-import { Button, Card, FieldGroup, Input } from "~/components/ui";
+import { Button, Card, FieldGroup, Input, PasswordInput } from "~/components/ui";
 import { ApiError } from "~/lib/api/types";
 import { useI18n } from "~/i18n";
 import { registerSchema, type RegisterFormData } from "~/schemas/register.schema";
@@ -134,12 +134,12 @@ export default function RegisterPage() {
                   hint={t("auth.passwordHint")}
                   error={field.error}
                 >
-                  <Input
+                  <PasswordInput
                     {...props}
-                    type="password"
                     autocomplete="new-password"
                     placeholder="••••••••"
                     value={field.value}
+                    error={field.error}
                     disabled={submission.pending}
                   />
                 </FieldGroup>
@@ -153,12 +153,12 @@ export default function RegisterPage() {
                   requirement="required"
                   error={field.error}
                 >
-                  <Input
+                  <PasswordInput
                     {...props}
-                    type="password"
                     autocomplete="new-password"
                     placeholder="••••••••"
                     value={field.value}
+                    error={field.error}
                     disabled={submission.pending}
                   />
                 </FieldGroup>
