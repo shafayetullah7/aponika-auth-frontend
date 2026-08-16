@@ -3,6 +3,7 @@ export { default as Card } from "./Card";
 export { default as Input } from "./Input";
 export { default as PasswordInput } from "./PasswordInput";
 export { FieldGroup } from "./FieldGroup";
+export { LoadingFallback } from "./LoadingFallback";
 
 export type { ButtonProps } from "./Button";
 export type { CardProps } from "./Card";

@@ -1,6 +1,7 @@
 import { A, useSearchParams } from "@solidjs/router";
-import { Show } from "solid-js";
-import { Card } from "~/components/ui";
+import { createSignal, Show } from "solid-js";
+import { Button, Card } from "~/components/ui";
+import { buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
 import { useI18n } from "~/i18n";
 
 function readQueryValue(value: string | string[] | undefined): string | undefined {
@@ -32,11 +33,14 @@ function resolveErrorMessage(
 export default function OAuthErrorPage() {
   const { t } = useI18n();
   const [searchParams] = useSearchParams();
+  const [showDetails, setShowDetails] = createSignal(false);
 
   const error = () => readQueryValue(searchParams.error);
   const description = () => readQueryValue(searchParams.error_description);
   const state = () => readQueryValue(searchParams.state);
   const message = () => resolveErrorMessage(error(), description(), t);
+  const loginHref = () => buildAuthPathWithReturnTo("/login", searchParams.returnTo);
+  const isDev = import.meta.env.DEV;
 
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
@@ -44,11 +48,14 @@ export default function OAuthErrorPage() {
         <h1 class="h3 text-center">{t("oauthError.title")}</h1>
         <p class="mt-4 text-center text-forest-700">{message()}</p>
 
-        <Show when={error()}>
+        <Show when={error() && (isDev || showDetails())}>
           <div class="mt-6 rounded-xl border border-forest-200 bg-white px-4 py-3 text-sm text-forest-700">
             <p>
               <span class="font-medium">{t("oauthError.codeLabel")}</span> {error()}
             </p>
+            <Show when={description()}>
+              <p class="mt-2">{description()}</p>
+            </Show>
             <Show when={state()}>
               <p class="mt-2">
                 <span class="font-medium">{t("oauthError.stateLabel")}</span>{" "}
@@ -58,16 +65,28 @@ export default function OAuthErrorPage() {
           </div>
         </Show>
 
-        <p class="mt-6 text-center text-sm text-forest-600">
-          {t("oauthError.hint")}
-        </p>
-
-        <div class="mt-8 text-center">
-          <A
-            href="/login"
-            class="font-semibold text-forest-700 hover:text-forest-800"
+        <Show when={error() && !isDev && !showDetails()}>
+          <button
+            type="button"
+            class="mt-4 w-full text-center text-sm font-medium text-forest-600 hover:text-forest-800"
+            onClick={() => setShowDetails(true)}
           >
-            {t("oauthError.backToSignIn")}
+            {t("oauthError.technicalDetails")}
+          </button>
+        </Show>
+
+        <p class="mt-6 text-center text-sm text-forest-600">{t("oauthError.hint")}</p>
+
+        <div class="mt-8 flex flex-col gap-3">
+          <A href={loginHref()}>
+            <Button type="button" class="w-full">
+              {t("oauthError.tryAgain")}
+            </Button>
+          </A>
+          <A href="/account">
+            <Button type="button" variant="secondary" class="w-full">
+              {t("oauthError.goHome")}
+            </Button>
           </A>
         </div>
       </Card>

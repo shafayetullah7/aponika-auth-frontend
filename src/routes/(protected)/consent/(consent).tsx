@@ -1,5 +1,12 @@
 import { useAction, useSearchParams, useSubmission } from "@solidjs/router";
 import { createEffect, createResource, createSignal, For, Show } from "solid-js";
+import type { Component } from "solid-js";
+import {
+  EnvelopeIcon,
+  KeyIcon,
+  UserCircleIcon,
+} from "~/components/icons/consent-scope.icons";
+import type { IconProps } from "~/components/icons/types";
 import { Button, Card } from "~/components/ui";
 import {
   extractInteractionUidFromReturnTo,
@@ -19,6 +26,17 @@ function scopeLabel(scope: string, t: (key: string) => string): string {
       return t("consent.scopeEmail");
     default:
       return scope;
+  }
+}
+
+function scopeIcon(scope: string): Component<IconProps> {
+  switch (scope) {
+    case "email":
+      return EnvelopeIcon;
+    case "profile":
+      return UserCircleIcon;
+    default:
+      return KeyIcon;
   }
 }
 
@@ -94,10 +112,18 @@ export default function ConsentPage() {
             >
               {(prompt) => (
                 <>
-                  <h1 class="h3 text-center">{t("consent.title")}</h1>
-                  <p class="mt-2 text-center text-forest-600">
-                    {t("consent.subtitle", prompt().clientName)}
-                  </p>
+                  <div class="flex flex-col items-center text-center">
+                    <div
+                      class="flex size-14 items-center justify-center rounded-2xl border border-forest-200 bg-forest-50 text-lg font-bold text-forest-700"
+                      aria-hidden="true"
+                    >
+                      {prompt().clientName.slice(0, 1).toUpperCase()}
+                    </div>
+                    <h1 class="h3 mt-4">{t("consent.title")}</h1>
+                    <p class="mt-2 text-forest-600">
+                      {t("consent.subtitle", prompt().clientName)}
+                    </p>
+                  </div>
 
                   <Show when={prompt().clientDescription}>
                     <p class="mt-4 text-sm text-forest-700">
@@ -109,9 +135,17 @@ export default function ConsentPage() {
                     <p class="text-sm font-medium text-forest-900">
                       {t("consent.requestedAccess")}
                     </p>
-                    <ul class="mt-3 space-y-2 text-sm text-forest-700">
+                    <ul class="mt-3 space-y-3 text-sm text-forest-700">
                       <For each={prompt().scopes}>
-                        {(scope) => <li>{scopeLabel(scope, t)}</li>}
+                        {(scope) => {
+                          const Icon = scopeIcon(scope);
+                          return (
+                            <li class="flex items-start gap-3">
+                              <Icon class="mt-0.5 size-5 shrink-0 text-forest-600" />
+                              <span>{scopeLabel(scope, t)}</span>
+                            </li>
+                          );
+                        }}
                       </For>
                     </ul>
                   </div>
@@ -124,8 +158,15 @@ export default function ConsentPage() {
                       onChange={(event) => setRemember(event.currentTarget.checked)}
                       disabled={allowSubmission.pending || denySubmission.pending}
                     />
-                    <span>{t("consent.remember")}</span>
+                    <span>
+                      {t("consent.remember")}
+                      <span class="mt-1 block text-xs text-forest-600">
+                        {t("consent.rememberHint")}
+                      </span>
+                    </span>
                   </label>
+
+                  <p class="mt-4 text-xs text-forest-600">{t("consent.denyHint")}</p>
 
                   <Show when={errorMessage()}>
                     <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">

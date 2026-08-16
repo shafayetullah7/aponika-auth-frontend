@@ -76,6 +76,9 @@ export default function LoginPage() {
   const registerHref = () =>
     buildAuthPathWithReturnTo("/register", searchParams.returnTo);
 
+  const forgotPasswordHref = () =>
+    buildAuthPathWithReturnTo("/forgot-password", searchParams.returnTo);
+
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
       <Card class="w-full max-w-md">
@@ -112,6 +115,8 @@ export default function LoginPage() {
                   autocomplete="email"
                   placeholder="you@example.com"
                   value={field.value}
+                  error={field.error}
+                  showErrorMessage={false}
                   disabled={submission.pending}
                 />
               </FieldGroup>
@@ -131,6 +136,8 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={field.value}
                   error={field.error}
+                  showPasswordLabel={t("auth.showPassword")}
+                  hidePasswordLabel={t("auth.hidePassword")}
                   disabled={submission.pending}
                 />
               </FieldGroup>
@@ -139,7 +146,7 @@ export default function LoginPage() {
 
           <div class="text-right">
             <A
-              href="/forgot-password"
+              href={forgotPasswordHref()}
               class="text-sm font-medium text-forest-700 hover:text-forest-900"
             >
               {t("auth.forgotPassword")}

@@ -41,3 +41,4 @@ In dev, the login page shows API health when the backend is running (`pnpm dev` 
 | [../docs/PLATFORM_SETUP_PLAN.md](../docs/PLATFORM_SETUP_PLAN.md) | Phased bootstrap (start here) |
 | [../docs/STACK.md](../docs/STACK.md) | Locked dependency versions |
 | [../docs/INTEGRATION.md](../docs/INTEGRATION.md) | OIDC contract for consumer apps |
+| [../docs/SHARED_UI_SYNC.md](../docs/SHARED_UI_SYNC.md) | Governed UI sync between admin and frontend |

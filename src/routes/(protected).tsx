@@ -1,16 +1,9 @@
 import { useNavigate } from "@solidjs/router";
 import { createEffect, Show, Suspense, type JSX } from "solid-js";
 import { LocaleToggle } from "~/components/LocaleToggle";
+import { LoadingFallback } from "~/components/ui";
 import { safeReturnTo } from "~/lib/auth/return-to";
 import { useSession } from "~/lib/auth";
-
-function LoadingFallback() {
-  return (
-    <div class="flex min-h-screen items-center justify-center">
-      <div class="h-8 w-8 animate-spin rounded-full border-2 border-forest-600 border-t-transparent" />
-    </div>
-  );
-}
 
 export default function ProtectedLayout(props: { children: JSX.Element }) {
   const user = useSession();

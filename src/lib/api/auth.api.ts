@@ -34,9 +34,7 @@ export const authApi = {
   },
 
   checkAuth(): Promise<User> {
-    return fetcher<User>("/auth/check", {
-      strict: false,
-    });
+    return fetcher<User>("/auth/check");
   },
 
   logout(): Promise<void> {

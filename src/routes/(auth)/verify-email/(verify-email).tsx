@@ -3,6 +3,7 @@ import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { Button, Card } from "~/components/ui";
 import { ApiError } from "~/lib/api/types";
 import { useI18n } from "~/i18n";
+import { buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
 import { verifyEmailAction } from "./verify-email.actions";
 
 function readTokenParam(value: string | string[] | undefined): string | undefined {
@@ -47,6 +48,15 @@ export default function VerifyEmailPage() {
 
   const isSuccess = () => submission.result?.success === true;
 
+  const loginHref = () => buildAuthPathWithReturnTo("/login", searchParams.returnTo);
+
+  const loginSuccessHref = () => {
+    const path = buildAuthPathWithReturnTo("/login", searchParams.returnTo);
+    const url = new URL(path, "http://local");
+    url.searchParams.set("verified", "1");
+    return `${url.pathname}${url.search}`;
+  };
+
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
       <Card class="w-full max-w-md text-center">
@@ -61,7 +71,7 @@ export default function VerifyEmailPage() {
         <Show when={isSuccess()}>
           <h1 class="h3">{t("verify.successTitle")}</h1>
           <p class="mt-4 text-forest-600">{t("verify.successMessage")}</p>
-          <A href="/login?verified=1" class="mt-8 block">
+          <A href={loginSuccessHref()} class="mt-8 block">
             <Button type="button" class="w-full">
               {t("verify.successAction")}
             </Button>
@@ -79,7 +89,7 @@ export default function VerifyEmailPage() {
                 {t("auth.signUp")}
               </Button>
             </A>
-            <A href="/login">
+            <A href={loginHref()}>
               <Button type="button" class="w-full">
                 {t("auth.backToSignIn")}
               </Button>
