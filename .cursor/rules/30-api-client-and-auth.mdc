@@ -8,6 +8,35 @@ alwaysApply: false
 
 - Route API calls through `~/lib/api/api-client.ts` `fetcher`.
 - Auth API base: `VITE_API_BASE_URL` (default `http://localhost:3010/api/v1`).
-- Use `credentials: "include"` for cookie-based session (BFF model).
-- Avoid ad-hoc raw `fetch` for internal API endpoints.
-- Extend fetcher with CSRF/refresh in auth feature phase — do not duplicate per route.
+- Use `credentials: "include"` for cookie-based session (BFF model per ADR-002).
+- Avoid ad-hoc raw `fetch` for internal API endpoints (except `fetchAbsolute` for `/health`).
+- Use `authApi` / `accountApi` modules — do not duplicate endpoint strings in routes.
+
+## CSRF (double-submit)
+
+Backend sets `user-xsrf-token` (non-httpOnly) on login. State-changing requests (`POST`, `PUT`, `PATCH`, `DELETE`) must send:
+
+- Cookie: `user-xsrf-token`
+- Header: `X-XSRF-TOKEN` (same value)
+
+`fetcher` attaches the header automatically when the cookie is present. Do not read JWTs in client JS — session cookies are httpOnly.
+
+## SSR cookie propagation
+
+On the server, `fetcher` forwards the incoming `Cookie` header to the API and appends `Set-Cookie` from API responses to the SolidStart response via `vinxi/http`. Login/register/logout actions must run as `"use server"` functions so cookies reach the browser.
+
+## Session
+
+- `getSession` / `useSession` — `authApi.checkAuth()` wrapped in a router query (`user-session`).
+- Protected routes use `(protected)` layout; auth pages use `(auth)` layout.
+- Auto-refresh on `401`: `fetcher` calls `POST /auth/refresh` once, then retries (refresh token rotation on backend).
+
+## Cookie names (user)
+
+| Cookie | Purpose |
+|--------|---------|
+| `userAccessToken` | httpOnly access JWT |
+| `userRefreshToken` | httpOnly refresh JWT |
+| `user-xsrf-token` | CSRF token (readable by JS for header) |
+
+Separate from admin console cookies on the same API origin.

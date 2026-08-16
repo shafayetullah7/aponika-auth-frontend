@@ -30,6 +30,8 @@ export const config = {
   auth: {
     loginUrl: "/login",
     registerUrl: "/register",
+    accountUrl: "/account",
+    forgotPasswordUrl: "/forgot-password",
   },
   isDev: import.meta.env.DEV,
 } as const;
