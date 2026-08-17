@@ -67,6 +67,11 @@ export default function ConsentPage() {
     void oauthConsentApi
       .getInteraction(uid)
       .then((prompt) => {
+        if (prompt.autoRedirectUrl) {
+          window.location.assign(prompt.autoRedirectUrl);
+          return;
+        }
+
         setDetails(prompt);
         setLoadError(undefined);
       })
@@ -144,7 +149,9 @@ export default function ConsentPage() {
                     </div>
                     <h1 class="h3 mt-4">{t("consent.title")}</h1>
                     <p class="mt-2 text-forest-600">
-                      {t("consent.subtitle", prompt().clientName)}
+                      {t("consent.subtitle", {
+                        clientName: prompt().clientName,
+                      })}
                     </p>
                   </div>
 

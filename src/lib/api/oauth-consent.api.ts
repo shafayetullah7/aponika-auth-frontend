@@ -6,6 +6,8 @@ export type OidcConsentPromptDetails = {
   clientName: string;
   clientDescription: string | null;
   scopes: string[];
+  /** Set when the client is trusted first-party; consent is completed server-side. */
+  autoRedirectUrl?: string;
 };
 
 export type OidcConsentDecisionResult = {

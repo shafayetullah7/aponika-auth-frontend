@@ -10,7 +10,10 @@ import * as bn from "./bn";
 import * as en from "./en";
 
 export type Locale = "en" | "bn";
-export type Translator = (key: string, ...args: (string | number)[]) => string;
+export type Translator = (
+  key: string,
+  ...args: (string | number | Record<string, string | number>)[]
+) => string;
 
 export interface I18nContextInterface {
   t: Translator;

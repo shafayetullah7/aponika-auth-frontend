@@ -85,7 +85,7 @@ export const dict = {
   },
   consent: {
     title: "Authorize application",
-    subtitle: "{0} wants to access your Aponika account",
+    subtitle: "{{ clientName }} wants to access your Aponika account",
     requestedAccess: "This application is requesting:",
     scopeOpenId: "Sign you in with OpenID Connect",
     scopeProfile: "View your basic profile",
