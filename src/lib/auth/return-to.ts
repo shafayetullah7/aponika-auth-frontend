@@ -9,7 +9,9 @@ const BLOCKED_PREFIXES = [
   "/login",
   "/register",
   "/verify-email",
+  "/resend-verification",
   "/forgot-password",
+  "/oauth/resume",
 ] as const;
 
 function isBlockedReturnTo(path: string): boolean {
@@ -54,6 +56,23 @@ function isAllowedReturnTo(value: string): boolean {
   return isAllowedInternalPath(value);
 }
 
+export function isOidcInteractionReturnTo(value: string): boolean {
+  return (
+    (value.startsWith("http://") || value.startsWith("https://")) &&
+    isAllowedOidcInteractionUrl(value)
+  );
+}
+
+export function buildOAuthResumeHref(returnTo: string): string {
+  if (!isOidcInteractionReturnTo(returnTo)) {
+    return safeReturnTo(returnTo);
+  }
+
+  const params = new URLSearchParams();
+  params.set("returnTo", returnTo);
+  return `/oauth/resume?${params.toString()}`;
+}
+
 export function safeReturnTo(
   value: string | string[] | undefined,
   fallback: string = DEFAULT_RETURN_TO,
@@ -79,6 +98,29 @@ export function buildAuthPathWithReturnTo(
   const params = new URLSearchParams();
   params.set("returnTo", raw);
   return `${path}?${params.toString()}`;
+}
+
+export function buildResendVerificationHref(
+  options: {
+    returnTo?: string | string[] | undefined;
+    email?: string;
+  } = {},
+): string {
+  const params = new URLSearchParams();
+  const rawReturnTo = Array.isArray(options.returnTo)
+    ? options.returnTo[0]
+    : options.returnTo;
+
+  if (rawReturnTo && isAllowedReturnTo(rawReturnTo)) {
+    params.set("returnTo", rawReturnTo);
+  }
+
+  if (options.email?.trim()) {
+    params.set("email", options.email.trim());
+  }
+
+  const query = params.toString();
+  return query ? `/resend-verification?${query}` : "/resend-verification";
 }
 
 export function extractInteractionUidFromReturnTo(returnTo: string): string | null {

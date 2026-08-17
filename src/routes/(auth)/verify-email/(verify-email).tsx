@@ -1,9 +1,9 @@
 import { A, useAction, useSearchParams, useSubmission } from "@solidjs/router";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { Button, Card } from "~/components/ui";
-import { ApiError } from "~/lib/api/types";
+import { type VerifyEmailErrorKind } from "~/lib/auth/verify-email-errors";
 import { useI18n } from "~/i18n";
-import { buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
+import { buildAuthPathWithReturnTo, buildResendVerificationHref } from "~/lib/auth/return-to";
 import { verifyEmailAction } from "./verify-email.actions";
 
 function readTokenParam(value: string | string[] | undefined): string | undefined {
@@ -16,13 +16,14 @@ export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const verifyTrigger = useAction(verifyEmailAction);
   const submission = useSubmission(verifyEmailAction);
-  const [errorMessage, setErrorMessage] = createSignal<string | null>(null);
+  const [errorKind, setErrorKind] = createSignal<VerifyEmailErrorKind | null>(null);
+  const [resultMessage, setResultMessage] = createSignal<string | undefined>();
   const [hasStarted, setHasStarted] = createSignal(false);
 
   onMount(() => {
     const token = readTokenParam(searchParams.token);
     if (!token) {
-      setErrorMessage(t("verify.missingToken"));
+      setErrorKind("missing_token");
       return;
     }
 
@@ -31,24 +32,45 @@ export default function VerifyEmailPage() {
   });
 
   createEffect(() => {
-    if (!submission.error) return;
+    const result = submission.result;
+    if (!result) return;
 
-    const error = submission.error as ApiError | Error;
-    if (error instanceof ApiError) {
-      const data = error.data as { message?: string } | undefined;
-      setErrorMessage(data?.message || error.message || t("verify.failed"));
+    if (result.success) {
+      setErrorKind(null);
+      setResultMessage(undefined);
       return;
     }
 
-    setErrorMessage(error.message || t("verify.failed"));
+    setErrorKind(result.kind);
+    setResultMessage(result.message);
   });
 
+  const errorMessage = () => {
+    const kind = errorKind();
+    if (!kind) return null;
+
+    if (kind === "missing_token") {
+      return t("verify.missingToken");
+    }
+
+    if (kind === "invalid_token") {
+      return resultMessage() || t("verify.failed");
+    }
+
+    return resultMessage() || t("verify.failed");
+  };
+
   const isLoading = () =>
-    hasStarted() && submission.pending && !submission.result && !errorMessage();
+    hasStarted() && submission.pending && !submission.result && !errorKind();
 
   const isSuccess = () => submission.result?.success === true;
 
   const loginHref = () => buildAuthPathWithReturnTo("/login", searchParams.returnTo);
+
+  const resendVerificationHref = () =>
+    buildResendVerificationHref({
+      returnTo: searchParams.returnTo,
+    });
 
   const loginSuccessHref = () => {
     const path = buildAuthPathWithReturnTo("/login", searchParams.returnTo);
@@ -84,6 +106,11 @@ export default function VerifyEmailPage() {
             {errorMessage()}
           </p>
           <div class="mt-8 flex flex-col gap-3">
+            <A href={resendVerificationHref()}>
+              <Button type="button" class="w-full">
+                {t("auth.resendVerificationButton")}
+              </Button>
+            </A>
             <A href="/register">
               <Button type="button" variant="secondary" class="w-full">
                 {t("auth.signUp")}

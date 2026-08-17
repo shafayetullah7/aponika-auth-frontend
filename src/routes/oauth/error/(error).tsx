@@ -21,6 +21,8 @@ function resolveErrorMessage(
       return t("oauthError.invalidClient");
     case "invalid_request":
       return t("oauthError.invalidRequest");
+    case "interaction_expired":
+      return t("oauthError.interactionExpired");
     case "unauthorized_client":
       return t("oauthError.unauthorizedClient");
     case "server_error":

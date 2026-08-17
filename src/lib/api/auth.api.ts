@@ -33,6 +33,14 @@ export const authApi = {
     });
   },
 
+  resendVerification(data: { email: string }): Promise<void> {
+    return fetcher<void>("/auth/resend-verification", {
+      method: "POST",
+      body: JSON.stringify(data),
+      strict: false,
+    });
+  },
+
   checkAuth(): Promise<User> {
     return fetcher<User>("/auth/check");
   },

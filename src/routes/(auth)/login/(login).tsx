@@ -3,8 +3,13 @@ import { createEffect, createSignal, Show } from "solid-js";
 import { createForm } from "@modular-forms/solid";
 import { ApiHealthStatus } from "~/components/ApiHealthStatus";
 import { Button, Card, FieldGroup, Input, PasswordInput } from "~/components/ui";
-import { getLoginErrorState } from "~/lib/auth/login-errors";
-import { safeReturnTo, buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
+import { type LoginErrorKind } from "~/lib/auth/login-errors";
+import { navigateAfterAuth } from "~/lib/auth/navigate-after-auth";
+import {
+  safeReturnTo,
+  buildAuthPathWithReturnTo,
+  buildResendVerificationHref,
+} from "~/lib/auth/return-to";
 import { useI18n } from "~/i18n";
 import { loginSchema, type LoginFormData } from "~/schemas/login.schema";
 import { loginAction } from "./login.actions";
@@ -19,9 +24,8 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const loginTrigger = useAction(loginAction);
   const submission = useSubmission(loginAction);
-  const [errorKind, setErrorKind] = createSignal<
-    ReturnType<typeof getLoginErrorState>["kind"] | null
-  >(null);
+  const [errorKind, setErrorKind] = createSignal<LoginErrorKind | null>(null);
+  const [emailInput, setEmailInput] = createSignal("");
 
   const [, { Form, Field }] = createForm<LoginFormData>({
     validate: (values) => {
@@ -38,20 +42,20 @@ export default function LoginPage() {
   });
 
   createEffect(() => {
-    if (!submission.error) return;
+    const result = submission.result;
+    if (!result) return;
 
-    const state = getLoginErrorState(submission.error);
-    setErrorKind(state.kind);
-  });
-
-  createEffect(() => {
-    if (submission.result?.success) {
-      window.location.assign(submission.result.target || "/account");
+    if (result.success) {
+      navigateAfterAuth(result.target);
+      return;
     }
+
+    setErrorKind(result.kind);
   });
 
   const handleSubmit = (values: LoginFormData) => {
     setErrorKind(null);
+    setEmailInput(values.email);
     loginTrigger({
       ...values,
       returnTo: safeReturnTo(searchParams.returnTo),
@@ -79,6 +83,12 @@ export default function LoginPage() {
   const forgotPasswordHref = () =>
     buildAuthPathWithReturnTo("/forgot-password", searchParams.returnTo);
 
+  const resendVerificationHref = () =>
+    buildResendVerificationHref({
+      returnTo: searchParams.returnTo,
+      email: emailInput(),
+    });
+
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
       <Card class="w-full max-w-md">
@@ -95,7 +105,12 @@ export default function LoginPage() {
           <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             <p>{errorMessage()}</p>
             <Show when={errorKind() === "invalid_credentials"}>
-              <p class="mt-2 text-red-700">{t("auth.unverifiedEmailHint")}</p>
+              <A
+                href={resendVerificationHref()}
+                class="mt-2 inline-block text-sm font-medium text-red-800 underline hover:text-red-900"
+              >
+                {t("auth.resendVerificationLink")}
+              </A>
             </Show>
           </div>
         </Show>
@@ -118,6 +133,10 @@ export default function LoginPage() {
                   error={field.error}
                   showErrorMessage={false}
                   disabled={submission.pending}
+                  onInput={(event) => {
+                    props.onInput?.(event);
+                    setEmailInput(event.currentTarget.value);
+                  }}
                 />
               </FieldGroup>
             )}

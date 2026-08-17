@@ -1,9 +1,9 @@
-import { createAsync } from "@solidjs/router";
+import { createSignal, onMount, Show } from "solid-js";
 import type { JSX } from "solid-js";
 import { getHealth } from "~/lib/api/health.api";
 import { ApiError } from "~/lib/api/types";
 import { config } from "~/lib/config";
-import { useI18n } from "~/i18n";
+import { useI18n, type Translator } from "~/i18n";
 
 type HealthResult =
   | Awaited<ReturnType<typeof getHealth>>
@@ -17,7 +17,7 @@ function isErrorResult(
 
 function HealthStatusBadge(props: {
   result: HealthResult;
-  t: ReturnType<typeof useI18n>["t"];
+  t: Translator;
   class?: string;
 }): JSX.Element {
   const { result, t } = props;
@@ -54,22 +54,29 @@ function HealthStatusBadge(props: {
   );
 }
 
-export function ApiHealthStatus(props: { class?: string }) {
+function ApiHealthStatusInner(props: { class?: string }) {
   const { t } = useI18n();
+  const [health, setHealth] = createSignal<HealthResult | undefined>();
 
-  if (!config.isDev) {
-    return null;
-  }
-
-  const health = createAsync<HealthResult>(() =>
-    getHealth().catch((error: unknown) => ({ error })),
-  );
+  onMount(() => {
+    void getHealth()
+      .then((result) => setHealth(result))
+      .catch((error: unknown) => setHealth({ error }));
+  });
 
   return (
-    <>
-      {health() ? (
-        <HealthStatusBadge result={health()!} t={t} class={props.class} />
-      ) : null}
-    </>
+    <Show when={health()}>
+      {(result) => (
+        <HealthStatusBadge result={result()} t={t} class={props.class} />
+      )}
+    </Show>
+  );
+}
+
+export function ApiHealthStatus(props: { class?: string }) {
+  return (
+    <Show when={config.isDev}>
+      <ApiHealthStatusInner class={props.class} />
+    </Show>
   );
 }

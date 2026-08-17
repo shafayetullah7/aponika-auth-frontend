@@ -1,16 +1,13 @@
 import { readApiErrorShape } from "./api-error-shape";
 
-export type LoginErrorKind =
-  | "invalid_credentials"
-  | "rate_limited"
-  | "unknown";
+export type RegisterErrorKind = "email_taken" | "rate_limited" | "unknown";
 
-export type LoginErrorState = {
-  kind: LoginErrorKind;
+export type RegisterErrorState = {
+  kind: RegisterErrorKind;
   message?: string;
 };
 
-export function getLoginErrorState(error: unknown): LoginErrorState {
+export function getRegisterErrorState(error: unknown): RegisterErrorState {
   const shape = readApiErrorShape(error);
   if (!shape) {
     return {
@@ -26,8 +23,8 @@ export function getLoginErrorState(error: unknown): LoginErrorState {
     return { kind: "rate_limited", message };
   }
 
-  if (shape.status === 401 || errorCode === "INVALID_CREDENTIALS") {
-    return { kind: "invalid_credentials", message };
+  if (shape.status === 409 || errorCode === "DUPLICATE_ENTRY") {
+    return { kind: "email_taken", message };
   }
 
   return { kind: "unknown", message };

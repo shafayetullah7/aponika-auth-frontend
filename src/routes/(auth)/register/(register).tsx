@@ -2,8 +2,8 @@ import { A, useAction, useSearchParams, useSubmission } from "@solidjs/router";
 import { createEffect, createSignal, Show } from "solid-js";
 import { createForm } from "@modular-forms/solid";
 import { Button, Card, FieldGroup, Input, PasswordInput } from "~/components/ui";
-import { ApiError } from "~/lib/api/types";
-import { buildAuthPathWithReturnTo } from "~/lib/auth/return-to";
+import { type RegisterErrorKind } from "~/lib/auth/register-errors";
+import { buildAuthPathWithReturnTo, buildResendVerificationHref } from "~/lib/auth/return-to";
 import { useI18n } from "~/i18n";
 import { registerSchema, type RegisterFormData } from "~/schemas/register.schema";
 import { registerAction } from "./register.actions";
@@ -13,7 +13,8 @@ export default function RegisterPage() {
   const [searchParams] = useSearchParams();
   const registerTrigger = useAction(registerAction);
   const submission = useSubmission(registerAction);
-  const [errorMessage, setErrorMessage] = createSignal<string | null>(null);
+  const [errorKind, setErrorKind] = createSignal<RegisterErrorKind | null>(null);
+  const [resultMessage, setResultMessage] = createSignal<string | undefined>();
   const [registeredEmail, setRegisteredEmail] = createSignal<string | null>(null);
 
   const [, { Form, Field }] = createForm<RegisterFormData>({
@@ -31,31 +32,48 @@ export default function RegisterPage() {
   });
 
   createEffect(() => {
-    if (submission.result?.success) {
-      setRegisteredEmail(submission.result.email);
-      setErrorMessage(null);
-    }
-  });
+    const result = submission.result;
+    if (!result) return;
 
-  createEffect(() => {
-    if (!submission.error) return;
-
-    const error = submission.error as ApiError | Error;
-    if (error instanceof ApiError) {
-      const data = error.data as { message?: string } | undefined;
-      setErrorMessage(data?.message || error.message || t("auth.registerFailed"));
+    if (result.success) {
+      setRegisteredEmail(result.email);
+      setErrorKind(null);
+      setResultMessage(undefined);
       return;
     }
 
-    setErrorMessage(error.message || t("auth.registerFailed"));
+    setErrorKind(result.kind);
+    setResultMessage(result.message);
   });
 
+  const errorMessage = () => {
+    const kind = errorKind();
+    if (!kind) return null;
+
+    if (kind === "rate_limited") {
+      return t("auth.registerRateLimited");
+    }
+
+    if (kind === "email_taken") {
+      return resultMessage() || t("auth.registerEmailTaken");
+    }
+
+    return resultMessage() || t("auth.registerFailed");
+  };
+
   const handleSubmit = (values: RegisterFormData) => {
-    setErrorMessage(null);
+    setErrorKind(null);
+    setResultMessage(undefined);
     registerTrigger(values);
   };
 
   const loginHref = () => buildAuthPathWithReturnTo("/login", searchParams.returnTo);
+
+  const resendVerificationHref = () =>
+    buildResendVerificationHref({
+      returnTo: searchParams.returnTo,
+      email: registeredEmail() ?? undefined,
+    });
 
   return (
     <main class="flex min-h-screen items-center justify-center bg-cream-50 p-4">
@@ -74,7 +92,12 @@ export default function RegisterPage() {
               <p class="mt-4 text-center text-sm text-forest-600">
                 {t("auth.checkEmailHint")}
               </p>
-              <A href={loginHref()} class="mt-8 block">
+              <A href={resendVerificationHref()} class="mt-4 block">
+                <Button type="button" variant="secondary" class="w-full">
+                  {t("auth.resendVerificationButton")}
+                </Button>
+              </A>
+              <A href={loginHref()} class="mt-4 block">
                 <Button type="button" class="w-full">
                   {t("auth.backToSignIn")}
                 </Button>

@@ -81,6 +81,7 @@ const AUTH_ROUTES = [
   "/auth/refresh",
   "/auth/register",
   "/auth/verify-email",
+  "/auth/resend-verification",
 ] as const;
 
 function isAuthRoute(endpoint: string): boolean {

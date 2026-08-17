@@ -1,6 +1,7 @@
 import { useNavigate } from "@solidjs/router";
 import { createEffect, Show } from "solid-js";
 import { LocaleToggle } from "~/components/LocaleToggle";
+import { navigateAfterAuth } from "~/lib/auth/navigate-after-auth";
 import { safeReturnTo } from "~/lib/auth/return-to";
 import { useSession } from "~/lib/auth";
 
@@ -20,12 +21,7 @@ export default function AuthLayout(props: { children: unknown }) {
     const params = new URLSearchParams(window.location.search);
     const target = safeReturnTo(params.get("returnTo") ?? undefined);
 
-    if (target.startsWith("http")) {
-      window.location.assign(target);
-      return;
-    }
-
-    navigate(target, { replace: true });
+    navigateAfterAuth(target, { navigate });
   });
 
   return (

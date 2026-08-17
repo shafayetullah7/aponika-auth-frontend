@@ -29,8 +29,18 @@ export const dict = {
     loginFailed: "Sign in failed. Please try again.",
     loginInvalidCredentials: "Invalid email or password.",
     loginRateLimited: "Too many sign-in attempts. Please wait and try again.",
-    unverifiedEmailHint:
-      "If you recently registered, verify your email first — unverified accounts cannot sign in.",
+    resendVerificationLink: "Didn't get the verification email? Resend link",
+    resendVerification: {
+      title: "Resend verification email",
+      subtitle: "Enter your account email and we'll send a new verification link.",
+      submit: "Send verification link",
+      sending: "Sending...",
+      successTitle: "Check your email",
+      successMessage:
+        "If an unverified account exists for that email, we sent a new verification link.",
+      rateLimited: "Too many attempts. Please wait and try again.",
+      failed: "Could not send the verification email. Please try again.",
+    },
     signingIn: "Signing in...",
     needAccount: "Need an account?",
     forgotPassword: "Forgot password?",
@@ -52,10 +62,13 @@ export const dict = {
     },
     verifiedBanner: "Email verified — you can sign in now.",
     registerFailed: "Registration failed. Please try again.",
+    registerEmailTaken: "An account with this email already exists.",
+    registerRateLimited: "Too many registration attempts. Please wait and try again.",
     registering: "Creating account...",
     registerSuccessTitle: "Check your email",
     registerSuccessMessage: "We sent a verification link to:",
     checkEmailHint: "Open the link in your email to verify your account, then sign in.",
+    resendVerificationButton: "Resend verification email",
     backToSignIn: "Back to sign in",
   },
   verify: {
@@ -105,6 +118,7 @@ export const dict = {
     accessDenied: "You declined access or the application was not allowed to continue.",
     invalidClient: "The application is not registered or is not allowed to sign in.",
     invalidRequest: "The sign-in request was invalid. The application may need to fix its configuration.",
+    interactionExpired: "This sign-in session expired or is no longer valid. Start again from the application you were using.",
     unauthorizedClient: "This application is not authorized for the requested sign-in method.",
     serverError: "The sign-in service encountered an error. Please try again later.",
     codeLabel: "Error code:",
@@ -114,5 +128,10 @@ export const dict = {
     tryAgain: "Try signing in again",
     goHome: "Go to account home",
     technicalDetails: "Technical details",
+  },
+  oauthResume: {
+    title: "Continuing sign-in",
+    message: "Taking you back to the application. This may take a moment.",
+    loading: "Loading",
   },
 } as const;
