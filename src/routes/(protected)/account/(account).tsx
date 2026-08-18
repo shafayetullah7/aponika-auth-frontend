@@ -1,5 +1,5 @@
 import { useAction, useSubmission } from "@solidjs/router";
-import { createEffect, createSignal, Show } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { createForm } from "@modular-forms/solid";
 import { Button, Card, FieldGroup, Input, PasswordInput } from "~/components/ui";
 import { ApiError } from "~/lib/api/types";
@@ -12,6 +12,10 @@ import {
   type UpdateProfileFormData,
 } from "~/schemas/account.schema";
 import { changePasswordAction, updateProfileAction } from "./account.actions";
+import {
+  oauthConsentApi,
+  type OidcRememberedConsent,
+} from "~/lib/api/oauth-consent.api";
 
 export default function AccountPage() {
   const { t } = useI18n();
@@ -27,6 +31,37 @@ export default function AccountPage() {
   const [profileError, setProfileError] = createSignal<string | null>(null);
   const [passwordMessage, setPasswordMessage] = createSignal<string | null>(null);
   const [passwordError, setPasswordError] = createSignal<string | null>(null);
+  const [consents, setConsents] = createSignal<OidcRememberedConsent[]>([]);
+  const [consentsError, setConsentsError] = createSignal<string | null>(null);
+  const [consentsMessage, setConsentsMessage] = createSignal<string | null>(null);
+  const [revokingClientId, setRevokingClientId] = createSignal<string | null>(
+    null,
+  );
+
+  onMount(() => {
+    void oauthConsentApi
+      .list()
+      .then((rows) => {
+        setConsents(rows);
+        setConsentsError(null);
+      })
+      .catch(() => setConsentsError(t("account.appsLoadFailed")));
+  });
+
+  const handleRevokeConsent = (clientId: string) => {
+    setConsentsMessage(null);
+    setRevokingClientId(clientId);
+    void oauthConsentApi
+      .revoke(clientId)
+      .then(() => {
+        setConsents((current) =>
+          current.filter((row) => row.clientId !== clientId),
+        );
+        setConsentsMessage(t("account.appsRevoked"));
+      })
+      .catch(() => setConsentsError(t("account.appsLoadFailed")))
+      .finally(() => setRevokingClientId(null));
+  };
 
   const [, { Form: ProfileForm, Field: ProfileField }] =
     createForm<UpdateProfileFormData>({
@@ -262,6 +297,53 @@ export default function AccountPage() {
               {t("account.changePassword")}
             </Button>
           </PasswordForm>
+        </section>
+
+        <section class="mt-6 space-y-4 rounded-xl border border-forest-200 bg-white p-4">
+          <h2 class="text-sm font-semibold text-forest-900">{t("account.appsSection")}</h2>
+
+          <Show when={consentsMessage()}>
+            <div class="rounded-lg border border-forest-200 bg-forest-50 px-3 py-2 text-sm text-forest-800">
+              {consentsMessage()}
+            </div>
+          </Show>
+
+          <Show when={consentsError()}>
+            <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+              {consentsError()}
+            </div>
+          </Show>
+
+          <Show
+            when={consents().length > 0}
+            fallback={
+              <p class="text-sm text-forest-600">{t("account.appsEmpty")}</p>
+            }
+          >
+            <ul class="space-y-3">
+              <For each={consents()}>
+                {(row) => (
+                  <li class="flex items-center justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-medium text-forest-900">
+                        {row.clientName}
+                      </p>
+                      <p class="text-xs text-forest-600">{row.clientId}</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleRevokeConsent(row.clientId)}
+                      loading={revokingClientId() === row.clientId}
+                      disabled={revokingClientId() !== null}
+                    >
+                      {t("account.appsRevoke")}
+                    </Button>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </Show>
         </section>
 
         <Button

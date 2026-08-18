@@ -12,6 +12,13 @@ export default function ProtectedLayout(props: { children: JSX.Element }) {
   createEffect(() => {
     const userData = user();
     if (userData === null) {
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname === "/consent"
+      ) {
+        window.location.replace("/oauth/error?error=interaction_expired");
+        return;
+      }
       const returnTo =
         typeof window !== "undefined"
           ? `${window.location.pathname}${window.location.search}`

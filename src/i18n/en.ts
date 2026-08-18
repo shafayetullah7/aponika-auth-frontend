@@ -83,7 +83,7 @@ export const dict = {
   },
   account: {
     title: "Your account",
-    subtitle: "Manage your profile and password.",
+    subtitle: "Manage your profile, password, and connected apps.",
     name: "Name",
     profileSection: "Profile",
     passwordSection: "Password",
@@ -94,6 +94,11 @@ export const dict = {
     profileUpdated: "Profile saved.",
     passwordChanged: "Password changed.",
     wrongCurrentPassword: "Current password is incorrect.",
+    appsSection: "Connected apps",
+    appsEmpty: "No remembered app access.",
+    appsRevoke: "Revoke",
+    appsRevoked: "Access revoked.",
+    appsLoadFailed: "Could not load connected apps.",
     signOut: "Sign out",
   },
   consent: {
@@ -111,6 +116,7 @@ export const dict = {
     deny: "Deny",
     missingInteraction: "This consent request is invalid or expired.",
     loadFailed: "We could not load this consent request. Start sign-in again from the application.",
+    decisionFailed: "We could not save this choice. Please try again.",
   },
   oauthError: {
     title: "Sign-in could not continue",

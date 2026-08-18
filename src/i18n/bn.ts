@@ -83,7 +83,7 @@ export const dict = {
   },
   account: {
     title: "আপনার অ্যাকাউন্ট",
-    subtitle: "প্রোফাইল ও পাসওয়ার্ড পরিচালনা করুন।",
+    subtitle: "প্রোফাইল, পাসওয়ার্ড ও সংযুক্ত অ্যাপ পরিচালনা করুন।",
     name: "নাম",
     profileSection: "প্রোফাইল",
     passwordSection: "পাসওয়ার্ড",
@@ -94,6 +94,11 @@ export const dict = {
     profileUpdated: "প্রোফাইল সংরক্ষিত হয়েছে।",
     passwordChanged: "পাসওয়ার্ড পরিবর্তন হয়েছে।",
     wrongCurrentPassword: "বর্তমান পাসওয়ার্ড ভুল।",
+    appsSection: "সংযুক্ত অ্যাপ",
+    appsEmpty: "মনে রাখা অ্যাপ অনুমতি নেই।",
+    appsRevoke: "প্রত্যাহার",
+    appsRevoked: "অনুমতি প্রত্যাহার হয়েছে।",
+    appsLoadFailed: "সংযুক্ত অ্যাপ লোড করা যায়নি।",
     signOut: "সাইন আউট",
   },
   consent: {
@@ -111,6 +116,7 @@ export const dict = {
     deny: "প্রত্যাখ্যান",
     missingInteraction: "এই অনুমতি অনুরোধটি অবৈধ বা মেয়াদোত্তীর্ণ।",
     loadFailed: "অনুমতি অনুরোধ লোড করা যায়নি। অ্যাপ থেকে আবার সাইন ইন শুরু করুন।",
+    decisionFailed: "এই সিদ্ধান্ত সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
   },
   oauthError: {
     title: "সাইন ইন চালিয়ে যাওয়া যায়নি",
